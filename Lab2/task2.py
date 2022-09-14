@@ -39,6 +39,8 @@ except ValueError:
     except ValueError:
         try:
             input_value = list(input_value.split())
+            if len(input_value) == 1:
+                input_value = list[0]
         except ValueError:
             input_value = str(input_value)
 finally:
