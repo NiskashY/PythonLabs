@@ -12,6 +12,7 @@ file_name = "database.txt"
 companies = {}
 average_profit = 0
 
+count = 0
 with open(file_name, "r") as data:
     for company in data:
         values_list = list(company.split())
@@ -19,8 +20,13 @@ with open(file_name, "r") as data:
         companies[values_list[0]] = values_list[2] - values_list[3]
         if companies[values_list[0]] > 0:
             average_profit += companies[values_list[0]]
+            count += 1
 
-companies["average"] = average_profit / len(companies)
+
+if count != 0:
+    companies["average"] = average_profit / count
+else:
+    companies["average"] = 0
 
 file_name_output = "ouput_data.json"
 
