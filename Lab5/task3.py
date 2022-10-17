@@ -42,17 +42,57 @@ import datetime
 
 matplotlib.rcParams.update({'font.size': 10})
 
+
+# get data from test.csv
 DATA_TEST_PATH = 'test.csv'
-df = pd.read_csv(DATA_TEST_PATH)
+init_data = pd.read_csv(DATA_TEST_PATH)
+# mix value in init_data and get 1000 of them
+df = init_data.sample(n=1000)
+
+# show amount of NaN elements in each category
+print("Amount of nulls in each category:")
+print(df.isna().sum())
 
 PREPARED_DATASET_PATH = './price_prepared.csv'
-
+"""
 df.DistrictId = df.DistrictId.astype(object)
 df.Id = df.Id.astype(object)
 df.info()
 print(df.describe())
+"""
+
+# insert into plt hisotgram of data
+digital_features = df.select_dtypes(exclude=[object])
+digital_features.hist(figsize=(18,12), bins=30)
+
+# insert into plt boxplot of data
+plt.figure(figsize=(16, 8), num='BoxplotData')
+sns.boxplot(data=df[['Square', 'LifeSquare', 'KitchenSquare']], orient='h')
+plt.xscale('symlog')
+plt.xlim(left=-1)
+
+# show histogram and boxplot
+plt.show()
+
+"""
+df.loc[df['Rooms'].isin([0, 10, 19]), 'Rooms'] = int(df['Rooms'].median())
+print(df.describe())
+"""
+
+# show charasterictics before
+print(df.describe())
+
+df.loc[(df['LifeSquare'] > (3 / 2) * df['LifeSquare'].median) | ((df['LifeSquare'] < 0.5 * df['LifeSquare'].median)), 'LifeSquare'] = df['LifeSquare'].median()
+df.loc[(df['Square'] > (3 / 2) * df['Square'].median) | ((df['Square'] < 0.5 * df['Square'].median)), 'Square'] = df['Square'].median()
+df.loc[(df['KitchenSquare'] > (3 / 2) * df['KitchenSquare'].median) | ((df['KitchenSquare'] < 0.5 * df['KitchenSquare'].median)), 'KitchenSquare'] = df['KitchenSquare'].median()
+
+# show charasterictics after
+df.describe()
 
 digital_features = df.select_dtypes(exclude=[object])
 digital_features.hist(figsize=(18,12), bins=30)
-plt.show()
+
+#plt.show()
+
+
 
