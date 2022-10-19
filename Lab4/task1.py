@@ -1,5 +1,4 @@
 class String:
-    __storage = "aaa"
     __string_count = 0
 
     def __init__(self):

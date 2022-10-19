@@ -113,7 +113,7 @@ print(cnt)
 digital_features = df.select_dtypes(exclude=[object])
 digital_features.hist(figsize=(18,12), bins=30)
 
-#plt.show()
+plt.show()
 
 new_df = df[['DistrictId', 'Rooms']].copy()
 new_df['Rooms1'] = 1
@@ -122,3 +122,6 @@ print (new_df)
 amount_of_rooms = pd.pivot_table(new_df, index=["DistrictId"], values="Rooms1", columns = "Rooms",fill_value=0, aggfunc=np.sum)
 
 print(amount_of_rooms.to_string())
+
+RESULT_DATASET_PATH = './result.csv'
+df.to_csv(RESULT_DATASET_PATH, index=False)
