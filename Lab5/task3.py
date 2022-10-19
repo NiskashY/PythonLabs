@@ -54,12 +54,8 @@ print("Amount of nulls in each category:")
 print(df.isna().sum())
 
 PREPARED_DATASET_PATH = './price_prepared.csv'
-"""
 df.DistrictId = df.DistrictId.astype(object)
 df.Id = df.Id.astype(object)
-df.info()
-print(df.describe())
-"""
 
 # insert into plt hisotgram of data
 digital_features = df.select_dtypes(exclude=[object])
@@ -72,27 +68,57 @@ plt.xscale('symlog')
 plt.xlim(left=-1)
 
 # show histogram and boxplot
-plt.show()
+# plt.show()
 
-"""
-df.loc[df['Rooms'].isin([0, 10, 19]), 'Rooms'] = int(df['Rooms'].median())
-print(df.describe())
-"""
+df=df.sort_values(by='Square')
+df.LifeSquare.fillna(method='pad',inplace=True)
+
+df=df.sort_values(by='DistrictId')
+df.Healthcare_1.fillna(method='pad',inplace=True)
+
+df.sort_index(inplace=True)
+
 
 # show charasterictics before
 print(df.describe())
 
-df.loc[(df['LifeSquare'] > (3 / 2) * df['LifeSquare'].median) | ((df['LifeSquare'] < 0.5 * df['LifeSquare'].median)), 'LifeSquare'] = df['LifeSquare'].median()
-df.loc[(df['Square'] > (3 / 2) * df['Square'].median) | ((df['Square'] < 0.5 * df['Square'].median)), 'Square'] = df['Square'].median()
-df.loc[(df['KitchenSquare'] > (3 / 2) * df['KitchenSquare'].median) | ((df['KitchenSquare'] < 0.5 * df['KitchenSquare'].median)), 'KitchenSquare'] = df['KitchenSquare'].median()
+"""
+median_Life_Sq = df['LifeSquare'].median
+median_Sq = df['Square'].median
+median_Kitchen_Sq = df['KitchenSquare'].median
+"""
 
+# remove outliers
+df.loc[(df['LifeSquare'] > 1.6 * df['LifeSquare'].median()) | ((df['LifeSquare'] < 0.2 * df['LifeSquare'].median())), 'LifeSquare'] = df['LifeSquare'].median()
+df.loc[(df['Square'] > 1.6 * df['Square'].median()) | ((df['Square'] < 0.2 * df['Square'].median())), 'Square'] = df['Square'].median()
+df.loc[(df['KitchenSquare'] > 1.6 * df['KitchenSquare'].median()) | ((df['KitchenSquare'] < 0.2 * df['KitchenSquare'].median())), 'KitchenSquare'] = df['KitchenSquare'].median()
+
+"""
+df.loc[(df['LifeSquare'] > 70) | ((df['LifeSquare'] < 30)), 'LifeSquare'] = df['LifeSquare'].median()
+df.loc[(df['Square'] > 150) | (df['Square'] < 30), 'Square'] = df['Square'].median()
+df.loc[(df['KitchenSquare'] > 20) | ((df['KitchenSquare'] < 6)), 'KitchenSquare'] =df['KitchenSquare'].median()
+"""
 # show charasterictics after
-df.describe()
+print(df.describe())
+
+cnt = {}
+for item in df['Rooms']:
+    if item not in cnt:
+        cnt[item] = 1
+    else:
+        cnt[item] += 1
+
+print(cnt)
 
 digital_features = df.select_dtypes(exclude=[object])
 digital_features.hist(figsize=(18,12), bins=30)
 
 #plt.show()
 
+new_df = df[['DistrictId', 'Rooms']].copy()
+new_df['Rooms1'] = 1
+print (new_df)
+# build pivot table
+amount_of_rooms = pd.pivot_table(new_df, index=["DistrictId"], values="Rooms1", columns = "Rooms",fill_value=0, aggfunc=np.sum)
 
-
+print(amount_of_rooms.to_string())
